@@ -15,13 +15,13 @@ SELECT
         'lastName', p.lastName
     ) AS "Director"
 FROM
-    movies m
+    movie m
 LEFT JOIN
-    user_files f ON f.id = m.posterId
+    user_file f ON f.id = m.posterId
 LEFT JOIN 
-    persons p ON p.id = m.directorId
+    person p ON p.id = m.directorId
 WHERE
     m.countryId = 1
     AND m.releaseDate >= '2022-01-01'
     AND m.duration > 135
-    AND m.genres IN ('Action', 'Drama');
+    AND (m.genres LIKE '%Action%' OR m.genres LIKE '%Drama%');

@@ -1,10 +1,10 @@
 SELECT 
-    u.id AS "ID",
-    u.username AS "Username",
-    ARRAY_AGG(fm.movieId) AS "Favorite movie IDs"
+    "user".id AS "ID",
+    "user".username AS "Username",
+    ARRAY_AGG(favorite_movies.movieId) AS "Favorite movie IDs"
 FROM 
-    USERS u
+    "user"
 LEFT JOIN 
-    favorite_movies fm ON fm.userId = u.id
+    favorite_movies ON favorite_movies.userId = "user".id
 GROUP BY
-    u.id, u.username;
+    "user".id, "user".username;

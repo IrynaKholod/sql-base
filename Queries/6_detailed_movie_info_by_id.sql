@@ -1,45 +1,45 @@
 SELECT
-    movies.id AS "ID",
-    movies.title AS "Title",
-    movies.releaseDate AS "Release Date",
-    movies.duration AS "Duration",
-    movies.description AS "Description",
+    movie.id AS "ID",
+    movie.title AS "Title",
+    movie.releaseDate AS "Release Date",
+    movie.duration AS "Duration",
+    movie.description AS "Description",
     json_build_object(
-        'fileName', user_files.fileName,
-        'mimeType', user_files.mimeType,
-        'url', user_files.url
+        'fileName', user_file.fileName,
+        'mimeType', user_file.mimeType,
+        'url', user_file.url
     ) AS "Poster",
     json_build_object(
-        'id', persons.id,
-        'firstName', persons.firstName,
-        'lastName', persons.lastName,
+        'id', person.id,
+        'firstName', person.firstName,
+        'lastName', person.lastName,
         'photo', json_build_object(
-            'fileName', person_files.fileName,
-            'mimeType', person_files.mimeType,
-            'url', person_files.url
+            'fileName', person_file.fileName,
+            'mimeType', person_file.mimeType,
+            'url', person_file.url
         )
     ) AS "Director",
     (SELECT json_agg(
         json_build_object(
-            'id', actors.id,
-            'firstName', actors.firstName, 
-            'lastName', actors.lastName,
+            'id', p.id,
+            'firstName', p.firstName, 
+            'lastName', p.lastName,
             'photo', json_build_object(
-                'fileName', actor_files.fileName,
-                'mimeType', actor_files.mimeType,
-                'url', actor_files.url
+                'fileName', pf.fileName,
+                'mimeType', pf.mimeType,
+                'url', pf.url
             )
         )
     )
-    FROM persons actors
-    LEFT JOIN person_files actor_files ON actor_files.id = actors.primaryPhotoId
-    INNER JOIN characters ON actors.id = characters.personId
-    WHERE characters.movieId = movies.id) AS "Actors",
-    movies.genres AS "Genres"
+    FROM person p
+    LEFT JOIN person_file pf ON pf.id = p.primaryPhotoId
+    INNER JOIN character c ON p.id = c.personId
+    WHERE c.movieId = movie.id) AS "Actors",
+    movie.genres AS "Genres"
 FROM
-    movies
-LEFT JOIN user_files ON user_files.id = movies.posterId
-LEFT JOIN persons ON persons.id = movies.directorId
-LEFT JOIN person_files ON person_files.id = persons.primaryPhotoId
+    movie
+LEFT JOIN user_file ON user_file.id = movie.posterId
+LEFT JOIN person ON person.id = movie.directorId
+LEFT JOIN person_file ON person_file.id = person.primaryPhotoId
 WHERE 
-    movies.id = 1;
+    movie.id = 1;
