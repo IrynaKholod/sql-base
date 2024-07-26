@@ -5,41 +5,23 @@ SELECT
     m.duration AS "Duration",
     m.description AS "Description",
     json_build_object(
-        'fileName', uf.fileName,
-        'mimeType', uf.mimeType,
-        'url', uf.url
+        'fileName', f.fileName,
+        'mimeType', f.mimeType,
+        'url', f.url
     ) AS "Poster",
     json_build_object(
         'id', p.id,
         'firstName', p.firstName,
-        'lastName', p.lastName,
-        'photo', json_build_object(
-            'fileName', pf.fileName,
-            'mimeType', pf.mimeType,
-            'url', pf.url
-        )
-    ) AS "Director",
-    (SELECT json_agg(
-        json_build_object(
-            'id', a.id,
-            'firstName', a.firstName, 
-            'lastName', a.lastName,
-            'photo', json_build_object(
-                'fileName', af.fileName,
-                'mimeType', af.mimeType,
-                'url', af.url
-            )
-        )
-    )
-    FROM PERSONS a
-    LEFT JOIN person_files af ON af.id = a.primaryPhotoId
-    INNER JOIN characters c ON a.id = c.personId
-    WHERE c.movieId = m.id) AS "Actors",
-    m.genre AS "Genres"
+        'lastName', p.lastName
+    ) AS "Director"
 FROM
     movies m
-LEFT JOIN user_files uf ON uf.id = m.posterId
-LEFT JOIN persons p ON p.id = m.directorId
-LEFT JOIN person_files pf ON pf.id = p.primaryPhotoId
-WHERE 
-    m.id = 1;
+LEFT JOIN
+    user_files f ON f.id = m.posterId
+LEFT JOIN 
+    persons p ON p.id = m.directorId
+WHERE
+    m.countryId = 1
+    AND m.releaseDate >= '2022-01-01'
+    AND m.duration > 135
+    AND m.genres IN ('Action', 'Drama');
